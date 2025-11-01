@@ -89,16 +89,10 @@ async def later_action(interaction: discord.Interaction, message: discord.Messag
     issue_url = create_jira_task(summary, description)
 
     if issue_url:
-        #redirect_url = f"{CLOUD_RUN_BASE}/jira?link={urllib.parse.quote(issue_url)}"
         redirect_url = f"https://jira-bot-fapf.onrender.com/jira?link={urllib.parse.quote(issue_url)}"
-
-        await interaction.response.send_message(
-            f"Task created! Redirecting… {redirect_url}"
-        )
+        await interaction.followup.send(f"Task created! [Open in Jira]({redirect_url})", ephemeral=True)
     else:
-        await interaction.response.send_message(
-            "Failed to create task.", ephemeral=True
-        )
+        await interaction.followup.send("Failed to create task.", ephemeral=True)
 
 
 @bot.event
