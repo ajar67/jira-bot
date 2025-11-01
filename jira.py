@@ -73,7 +73,8 @@ def create_jira_task(summary, description):
     r = requests.post(url, auth=auth, headers=headers, data=json.dumps(payload))
     if r.status_code == 201:
         issue_key = r.json()["key"]
-        issue_url = f"{JIRA_URL}/jira/software/c/projects/{PROJECT_KEY}/boards/{BOARD_ID}?selectedIssue={issue_key}"
+        #issue_url = f"{JIRA_URL}/jira/software/c/projects/{PROJECT_KEY}/boards/{BOARD_ID}?selectedIssue={issue_key}"
+        issue_url = f"{JIRA_URL}/browse/{issue_key}"
         return issue_url
 
     else:
