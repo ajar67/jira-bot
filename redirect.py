@@ -1,6 +1,11 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, redirect, request
+import os
 
 app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Redirect service running on Render!"
 
 @app.route("/jira")
 def go_to_jira():
@@ -8,17 +13,10 @@ def go_to_jira():
     if not jira_link:
         return "Missing Jira link", 400
 
-    # HTML meta-refresh redirect for Cloud Run
-    html = f"""
-    <html>
-      <head>
-        <meta http-equiv="refresh" content="0;url={jira_link}" />
-        <title>Redirecting to Jira...</title>
-      </head>
-      <body>
-        <p>Redirecting to Jira… If this doesn’t happen automatically,
-           <a href="{jira_link}">click here</a>.</p>
-      </body>
-    </html>
-    """
-    return render_template_string(html)
+
+    return redirect(jira_link, code=302)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
