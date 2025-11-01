@@ -84,7 +84,12 @@ def create_jira_task(summary, description):
 
 @bot.tree.context_menu(name="Later")
 async def later_action(interaction: discord.Interaction, message: discord.Message):
-    await interaction.response.defer(ephemeral=True)
+    try:
+        await interaction.response.defer(ephemeral=True)
+    except discord.errors.NotFound:
+        print("Interaction already expired before defer()")
+        return
+    
     description = message.content or "No message content provided."
     summary = "Untitled Task"
     issue_url = create_jira_task(summary, description)
