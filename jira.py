@@ -2,6 +2,7 @@ import os, json, urllib.parse, requests, discord, threading
 from flask import Flask
 from requests.auth import HTTPBasicAuth
 from discord.ext import commands
+from flask import Flask, redirect, request
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,21 +18,21 @@ BOARD_ID = os.getenv("BOARD_ID")
 
 
 intents = discord.Intents.default()
-intents.message_content = True  # required for reading message text
+intents.message_content = True  
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 
-def keep_alive():
-    app = Flask(__name__)
+# def keep_alive():
+#     app = Flask(__name__)
 
-    @app.route("/")
-    def home():
-        return "Bot running!"
+#     @app.route("/")
+#     def home():
+#         return "Bot running!"
 
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port)
+#     port = int(os.environ.get("PORT", 8080))
+#     app.run(host="0.0.0.0", port=port)
 
-threading.Thread(target=keep_alive, daemon=True).start()
+# threading.Thread(target=keep_alive, daemon=True).start()
 
 
 
@@ -106,11 +107,30 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
     await bot.tree.sync()
     print("Synced commands.")
-   
 
+
+# === Flask Server ===
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Jira Redirect Service is running!"
+
+@app.route("/jira")
+def go_to_jira():
+    jira_link = request.args.get("link")
+    if not jira_link:
+        return "Missing Jira link", 400
+    return redirect(jira_link, code=302)
+
+def run_flask():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
+# === Run both ===
 if __name__ == "__main__":
+    threading.Thread(target=run_flask).start()
     bot.run(TOKEN)
-
 
 
 
