@@ -105,7 +105,7 @@ async def later_action(interaction: discord.Interaction, message: discord.Messag
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-    await bot.tree.sync()
+    await bot.tree.sync(guild=discord.Object(id=os.getenv("GUILD_ID")))
     print("Synced commands.")
 
 
