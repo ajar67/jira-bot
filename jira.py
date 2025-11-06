@@ -14,27 +14,12 @@ PROJECT_ID = os.getenv("PROJECT_ID")
 PROJECT_KEY = os.getenv("PROJECT_KEY")
 ISSUE_TYPE_ID = os.getenv("ISSUE_TYPE_ID")  
 BOARD_ID = os.getenv("BOARD_ID") 
-#CLOUD_RUN_BASE = os.getenv("CLOUD_RUN_BASE")
+
 
 
 intents = discord.Intents.default()
 intents.message_content = True  
 bot = commands.Bot(command_prefix="!", intents=intents)
-
-
-# def keep_alive():
-#     app = Flask(__name__)
-
-#     @app.route("/")
-#     def home():
-#         return "Bot running!"
-
-#     port = int(os.environ.get("PORT", 8080))
-#     app.run(host="0.0.0.0", port=port)
-
-# threading.Thread(target=keep_alive, daemon=True).start()
-
-
 
 
 def get_active_sprint_id():
@@ -96,7 +81,7 @@ async def later_action(interaction: discord.Interaction, message: discord.Messag
     issue_url = create_jira_task(summary, description)
 
     if issue_url:
-        redirect_url = f"https://jira-bot-fapf.onrender.com/jira?link={urllib.parse.quote(issue_url)}"
+        redirect_url = f"http://{os.getenv('SERVER_DOMAIN')}/jira?link={urllib.parse.quote(issue_url)}"
         await interaction.followup.send(f"Task created! [Open in Jira]({redirect_url})", ephemeral=True)
     else:
         await interaction.followup.send("Failed to create task.", ephemeral=True)
@@ -124,7 +109,7 @@ def go_to_jira():
     return redirect(jira_link, code=302)
 
 def run_flask():
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
 
 # === Run both ===
